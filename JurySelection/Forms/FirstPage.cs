@@ -54,6 +54,7 @@ namespace JurySelection
 
         private void newCaseButton_Click(object sender, EventArgs e)
         {
+            loadCaseButton.Enabled = false;
             panel1.Show();
             newCaseButton.BackColor = Color.LightBlue;
             caseNameTextbox.Show();
@@ -95,6 +96,55 @@ namespace JurySelection
         void t_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
+        }
+
+        private void addAllButton_Click(object sender, EventArgs e)
+        {
+            foreach(Control c in panel1.Controls)
+            {
+                if(c.GetType() == typeof(CheckBox))
+                {
+                    CheckBox cb = c as CheckBox;
+                    cb.Checked = true;
+                }
+            }
+        }
+
+        private void loadCaseButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\JurySelectionHelper";
+            if(openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Case theCase = new Case(openFileDialog.FileName);
+                CaseForm theCaseForm = new CaseForm(theCase, null);
+                theCaseForm.Location = Location;
+                theCaseForm.Size = Size;
+                theCaseForm.StartPosition = FormStartPosition.WindowsDefaultLocation;
+                this.Hide();
+                theCaseForm.Show();
+            }
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
+        {
+            newCaseButton.BackColor = SystemColors.Control;
+            loadCaseButton.Enabled = true;
+            panel1.Hide();
+            foreach(Control c in  panel1.Controls)
+            {
+                if (c.GetType() == typeof(CheckBox))
+                {
+                    CheckBox cb = c as CheckBox;
+                    cb.Checked = false;
+                }
+            }
+            createCaseButton.Hide();
+            noOfJurorsTextBox.Hide();
+            noOfJurorsTextBox.Text = "No. of Jurors";
+            caseNameTextbox.Hide();
+            caseNameTextbox.Text = "Case Name";
+            
         }
     }
 }

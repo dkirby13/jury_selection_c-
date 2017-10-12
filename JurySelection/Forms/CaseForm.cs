@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using JurySelection.Logic_Objects;
 using System.Reflection;
+using System.Threading;
+using System.Net.Mail;
 
 namespace JurySelection.Forms
 {
@@ -162,10 +164,14 @@ namespace JurySelection.Forms
             int buttonHeight = (int)(Math.Sqrt((jurorButtonPanel.Width * jurorButtonPanel.Height) / TheCase.NumberOfJurors) * .8);
             for (int i = 1; i < TheCase.NumberOfJurors + 1; i++)
             {
-                TheCase.TheJurors.Add(new Juror(i));
-                foreach(Info info in DefaultInfo)
+                
+                if (DefaultInfo != null)
                 {
-                    TheCase.TheJurors[i - 1].TheInfo.Add(new Info(info.Question, info.Answer));
+                    TheCase.TheJurors.Add(new Juror(i));
+                    foreach (Info info in DefaultInfo)
+                    {
+                        TheCase.TheJurors[i - 1].TheInfo.Add(new Info(info.Question, info.Answer));
+                    }
                 }
                 Button theButton = new Button();
                 theButton.Text = i.ToString();
@@ -179,6 +185,25 @@ namespace JurySelection.Forms
             
             searchButtons = new List<Label>(new Label[] { sb1, sb2, sb3, sb4, sb5 });
             colors = new List<Color>(new Color[] { SystemColors.Control, Color.Gold, Color.ForestGreen, Color.CadetBlue, Color.Azure, Color.LightSalmon });
+            legendpanel.Location = new Point(0, holderPanel.Height);
+            legendpanel.Width = (int)(Width * .25);
+            legendpanel.Height = Height - holderPanel.Height;
+            int hi = legendpanel.Height;
+            int k = 1;
+            foreach (Control con in legendpanel.Controls)
+            {
+                con.BackColor = Color.Azure;
+                con.Width = sidePanel.Width;
+                con.Height = (int)(sidePanel.Height * .15);
+                con.Location = new Point(0, h);
+                con.Text = "Help";
+                con.Show();
+                con.BringToFront();
+                hi = hi + con.Height;
+                k++;
+            }
+            //legendpanel.Show();
+            //legendpanel.BringToFront();
 
 
         }
@@ -186,7 +211,7 @@ namespace JurySelection.Forms
         private void Sbutton_Click(object sender, EventArgs e)
         {
 
-            numberOfSearchs++;
+            
             if(numberOfSearchs > 3)
             {
                 sbutton.Text = "Max 3 Searches";
@@ -199,7 +224,7 @@ namespace JurySelection.Forms
                     MessageBox.Show(this, "Please enter all the neccesary search information", "Information Missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
+                numberOfSearchs++;
                 SearchButtons(questionComboBox1.Text, answerComboBox.Text, Info.theType.aBool);
 
             }
@@ -211,20 +236,33 @@ namespace JurySelection.Forms
                     MessageBox.Show(this, "Please enter all the neccesary search information", "Information Missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
+                numberOfSearchs++;
                 SearchButtons(questionComboBox1.Text, answerComboBox.Text, Info.theType.aString);
 
             }
 
             else
             {
-
+                if (intComparatorTextBox.Text == "" || (greateThanButton.BackColor == SystemColors.Control &&
+                    equalButton.BackColor == SystemColors.Control && lessThanButton.BackColor == SystemColors.Control))
+                {
+                    MessageBox.Show(this, "Please enter all the neccesary search information", "Information Missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                numberOfSearchs++;
+                string comparator = intComparatorTextBox.Text;
+                if (greateThanButton.BackColor != SystemColors.Control)
+                    comparator = comparator + " >";
+                if (lessThanButton.BackColor != SystemColors.Control)
+                    comparator = comparator + " <";
+                if (equalButton.BackColor != SystemColors.Control)
+                    comparator = comparator + " =";
+                SearchButtons(questionComboBox1.Text, comparator, Info.theType.aInt);
             }
 
             doneButton.Show();
             searchCancelButton.Hide();
             sbutton.Text = "Additional Search";
-            legendpanel.Show();
 
         }
 
@@ -284,6 +322,7 @@ namespace JurySelection.Forms
             sidePanel.Location = new Point(0, 0);
             jurorButtonPanel.Width = (int)(Width * .75);
             jurorButtonPanel.Height = (int)(Height * .75);
+            holderPanel.Width = sidePanel.Width;
             caseNameLabel.Location = new Point((int)(Width * .5), (int)(Height * .08));
             jurorButtonPanel.Location = new Point((int)(Width * .25), (int)(Height * .15));
             int buttonWidth = (int)(Math.Sqrt((jurorButtonPanel.Width * jurorButtonPanel.Height) / TheCase.NumberOfJurors) * .8);
@@ -309,7 +348,11 @@ namespace JurySelection.Forms
                     if (inSearchMode)
                     {
                         theButton.Tag = ins[0];
-                        theButton.BackColor = colors[ins[0] + numberOfSearchs - 1];
+                        if (ins[0] + numberOfSearchs == 0)
+                            theButton.BackColor = colors[0];
+
+                        else
+                            theButton.BackColor = colors[ins[0] + numberOfSearchs - 1];
                         ins.RemoveAt(0);
                     }
                     else
@@ -328,31 +371,46 @@ namespace JurySelection.Forms
                 holderPanel.Height = (int)(Width * .25);
                 holderPanel.Location = new Point(groupQuestonPanel.Width, (int)(Height * .25));
             }
-
-            if(inSearchMode)
-            {
-
-            }
             
-            legendpanel.Controls.Clear();
-            legendpanel.Width = (int)(Width * .25);
-            legendpanel.Height = Height - holderPanel.Height;
-            h = legendpanel.Height;
-            for (int i = 0; i < searchButtons.Count; i++)
-            {
-                searchButtons[i].BackColor = colors[i + 1];
-                searchButtons[i].Width = legendpanel.Width;
-                searchButtons[i].Height = (int)(legendpanel.Height * .2);
-                searchButtons[i].Location = new Point(0, h);
-                h = h + searchButtons[i].Height;
-                legendpanel.Controls.Add(searchButtons[i]);
-                searchButtons[i].Show();
-                searchButtons[i].BringToFront();
-            }
-            legendpanel.Location = new Point(0, holderPanel.Height);
-            Controls.Add(legendpanel);
-            legendpanel.Show();
-            legendpanel.BringToFront();
+            //legendpanel.Width = (int)(Width * .25);
+            //legendpanel.Height = Height - holderPanel.Height;
+            //h = legendpanel.Height;
+            
+            //sb1.BackColor = colors[1];
+            //sb1.Width = legendpanel.Width;
+            //sb1.Height = (int)(legendpanel.Height * .2);
+            //sb1.Location = new Point(0, h);
+            // h = h + sb1.Height;
+
+            //sb2.BackColor = colors[2];
+            //sb2.Width = legendpanel.Width;
+            //sb2.Height = (int)(legendpanel.Height * .2);
+            //sb2.Location = new Point(0, h);
+            //h = h + sb1.Height;
+
+
+            //sb3.BackColor = colors[3];
+            //sb3.Width = legendpanel.Width;
+            //sb3.Height = (int)(legendpanel.Height * .2);
+            //sb3.Location = new Point(0, h);
+            //h = h + sb1.Height;
+
+
+            //sb4.BackColor = colors[4];
+            //sb4.Width = legendpanel.Width;
+            //sb4.Height = (int)(legendpanel.Height * .2);
+            //sb4.Location = new Point(0, h);
+            //h = h + sb1.Height;
+
+
+            //sb5.BackColor = colors[5];
+            //sb5.Width = legendpanel.Width;
+            //sb5.Height = (int)(legendpanel.Height * .2);
+            //sb5.Location = new Point(0, h);
+            //h = h + sb1.Height;
+
+
+            //legendpanel.Location = new Point(0, holderPanel.Height);
         }
 
         private void JurorButtonClicked(Object sender, EventArgs e)
@@ -383,6 +441,8 @@ namespace JurySelection.Forms
 
         void t_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (MessageBox.Show(this, "Would you like to save this case?", "Save Case?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                TheCase.Save();
             Application.Exit();
         }
 
@@ -412,13 +472,18 @@ namespace JurySelection.Forms
                     if (inSearchMode)
                     {
                         theButton.Tag = ins[0];
-                        theButton.BackColor = colors[ins[0] + numberOfSearchs - 1];
+                        if (ins[0] + numberOfSearchs == 0)
+                            theButton.BackColor = colors[0];
+                        else
+                            theButton.BackColor = colors[ins[0] + numberOfSearchs - 1];
                         ins.RemoveAt(0);
                     }
                     else
+                    {
                         theButton.Tag = 0;
-                    theButton.Click += new EventHandler(JurorButtonClicked);
-                    theButton.BackColor = Color.Gray;
+                        theButton.BackColor = SystemColors.Control;
+                    }
+                    theButton.Click += new EventHandler(JurorButtonClicked);  
                     jurorButtonPanel.Controls.Add(theButton);
                 }
             }
@@ -584,7 +649,8 @@ namespace JurySelection.Forms
                 if (j.TheLikeState == Juror.LikeState.Dislike)
                     b.BackColor = Color.LightCoral;
                 if (j.TheLikeState == Juror.LikeState.Neutral)
-                    b.BackColor = SystemColors.Control; 
+                    b.BackColor = SystemColors.Control;
+                c.Tag = 0;
             }
             doneButton.Hide();
             caseNameLabel.Text = TheCase.Name;
@@ -599,6 +665,7 @@ namespace JurySelection.Forms
             inSearchMode = false;
             numberOfSearchs = 0;
             sbutton.Text = "Search";
+            searchCancelButton.Show();
 
         }
 
@@ -620,26 +687,134 @@ namespace JurySelection.Forms
             holderPanel.Show();
             holderPanel.BringToFront();
             inSearchMode = true;
-            legendpanel.Width = (int)(Width * .25);
-            legendpanel.Height = Height- holderPanel.Height;
-            legendpanel.Controls.Clear();
-            int h = legendpanel.Height;
-            for (int i = 0; i < 5; i++)
+
+            
+
+            //sb1.BackColor = colors[1];
+            //sb1.Width = legendpanel.Width;
+            //sb1.Height = (int)(legendpanel.Height * .2);
+            //sb1.Location = new Point(0, h);
+            //h = h + sb1.Height;
+            //sb1.BringToFront();
+            //sb1.Show();
+
+            //sb2.BackColor = colors[2];
+            //sb2.Width = legendpanel.Width;
+            //sb2.Height = (int)(legendpanel.Height * .2);
+            //sb2.Location = new Point(0, h);
+            //h = h + sb1.Height;
+            //sb2.BringToFront();
+            //sb2.Show();
+
+            //sb3.BackColor = colors[3];
+            //sb3.Width = legendpanel.Width;
+            //sb3.Height = (int)(legendpanel.Height * .2);
+            //sb3.Location = new Point(0, h);
+            //h = h + sb1.Height;
+            //sb3.BringToFront();
+            //sb3.Show();
+
+            //sb4.BackColor = colors[4];
+            //sb4.Width = legendpanel.Width;
+            //sb4.Height = (int)(legendpanel.Height * .2);
+            //sb4.Location = new Point(0, h);
+            //h = h + sb1.Height;
+            //sb4.BringToFront();
+            //sb4.Show();
+
+            //sb5.BackColor = colors[5];
+            //sb5.Width = legendpanel.Width;
+            //sb5.Height = (int)(legendpanel.Height * .2);
+            //sb5.Location = new Point(0, h);
+            //h = h + sb1.Height;
+            //sb5.BringToFront();
+            //sb5.Show();
+
+            
+            //legendpanel.BringToFront();
+            //legendpanel.Show();
+        }
+
+        private void equalButton_Click(object sender, EventArgs e)
+        {
+            Button b = sender as Button;
+            b.BackColor = Color.LightBlue;
+            lessThanButton.BackColor = SystemColors.Control;
+            greateThanButton.BackColor = SystemColors.Control;
+        }
+
+        private void greateThanButton_Click(object sender, EventArgs e)
+        {
+            Button b = sender as Button;
+            b.BackColor = Color.LightBlue;
+            lessThanButton.BackColor = SystemColors.Control;
+            equalButton.BackColor = SystemColors.Control;
+        }
+
+        private void lessThanButton_Click(object sender, EventArgs e)
+        {
+            Button b = sender as Button;
+            b.BackColor = Color.LightBlue;
+            greateThanButton.BackColor = SystemColors.Control;
+            equalButton.BackColor = SystemColors.Control;
+        }
+
+        private void saceCaseButton_Click(object sender, EventArgs e)
+        {
+            TheCase.Save();
+            MessageBox.Show(this, "The Case was Succesfully Saved", "Case Saved", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Form1 firstPage = new Form1();
+            firstPage.Size = Size;
+            firstPage.Location = Location;
+            FormClosed -= t_FormClosed;
+            if (MessageBox.Show(this, "Would you like to save this case?", "Save Case?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                TheCase.Save();
+            firstPage.Show();
+            Close();
+
+        }
+
+        private void shareCaseButton_Click(object sender, EventArgs e)
+        {
+            if(MessageBox.Show(this, "Is this Email Address Correct: " + textBox2.Text, "Email Address Correct",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                searchButtons[i].BackColor = colors[i + 1];
-                searchButtons[i].Text = "Help";
-                searchButtons[i].Width = legendpanel.Width;
-                searchButtons[i].Height = (int)(legendpanel.Height * .2);
-                searchButtons[i].Location = new Point(0, h);
-                h = h + searchButtons[i].Height;
-                legendpanel.Controls.Add(searchButtons[i]);
-                searchButtons[i].BringToFront();
-
-
+                MailMessage mail = new MailMessage("dkirby@umail.ucsb.edu", "dkirby@umail.ucsb.edu");
+                SmtpClient client = new SmtpClient();
+                client.Port = 25;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
+                client.Host = "smtp.gmail.com";
+                mail.Subject = "Dominic Test Email";
+                mail.Body = "This probably won't work";
+                client.Send(mail);
             }
-            legendpanel.Location = new Point(0, holderPanel.Height);
-            legendpanel.Show();
-            legendpanel.BringToFront();
+        }
+
+        private void shareCancelButton_Click(object sender, EventArgs e)
+        {
+            sidePanel.Enabled = true;
+            jurorButtonPanel.Enabled = true;
+            caseNameLabel.Enabled = true;
+            textBox2.Text = "";
+            sharePanel.Hide();
+        }
+
+        private void shareButton_Click(object sender, EventArgs e)
+        {
+            sidePanel.Enabled = false;
+            jurorButtonPanel.Enabled = false;
+            caseNameLabel.Enabled = false;
+            textBox2.Text = "";
+            sharePanel.Width = (int)(Width * .25);
+            sharePanel.Height = (int)(Width * .25);
+            sharePanel.Location = new Point(0, 0);
+            sharePanel.Show();
+            sharePanel.BringToFront();
         }
     }
 }

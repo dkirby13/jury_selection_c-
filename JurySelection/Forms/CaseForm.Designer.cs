@@ -54,8 +54,8 @@
             this.sidePanel = new System.Windows.Forms.Panel();
             this.searchButton = new System.Windows.Forms.Button();
             this.groupquestionButton = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.saceCaseButton = new System.Windows.Forms.Button();
+            this.shareButton = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.doneButton = new System.Windows.Forms.Button();
@@ -65,6 +65,11 @@
             this.sb2 = new System.Windows.Forms.Label();
             this.sb4 = new System.Windows.Forms.Label();
             this.sb1 = new System.Windows.Forms.Label();
+            this.sharePanel = new System.Windows.Forms.Panel();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.shareCaseButton = new System.Windows.Forms.Button();
+            this.shareCancelButton = new System.Windows.Forms.Button();
             this.jurorButtonPanel.SuspendLayout();
             this.holderPanel.SuspendLayout();
             this.searchLayoutPanel1.SuspendLayout();
@@ -73,6 +78,7 @@
             this.groupQuestonPanel.SuspendLayout();
             this.sidePanel.SuspendLayout();
             this.legendpanel.SuspendLayout();
+            this.sharePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // jurorButtonPanel
@@ -166,6 +172,7 @@
             this.greateThanButton.TabIndex = 2;
             this.greateThanButton.Text = ">";
             this.greateThanButton.UseVisualStyleBackColor = true;
+            this.greateThanButton.Click += new System.EventHandler(this.greateThanButton_Click);
             // 
             // equalButton
             // 
@@ -175,6 +182,7 @@
             this.equalButton.TabIndex = 1;
             this.equalButton.Text = "=";
             this.equalButton.UseVisualStyleBackColor = true;
+            this.equalButton.Click += new System.EventHandler(this.equalButton_Click);
             // 
             // lessThanButton
             // 
@@ -184,6 +192,7 @@
             this.lessThanButton.TabIndex = 0;
             this.lessThanButton.Text = "<";
             this.lessThanButton.UseVisualStyleBackColor = true;
+            this.lessThanButton.Click += new System.EventHandler(this.lessThanButton_Click);
             // 
             // boolIntPanel
             // 
@@ -304,8 +313,8 @@
             // 
             this.sidePanel.Controls.Add(this.searchButton);
             this.sidePanel.Controls.Add(this.groupquestionButton);
-            this.sidePanel.Controls.Add(this.button4);
-            this.sidePanel.Controls.Add(this.button3);
+            this.sidePanel.Controls.Add(this.saceCaseButton);
+            this.sidePanel.Controls.Add(this.shareButton);
             this.sidePanel.Controls.Add(this.button2);
             this.sidePanel.Controls.Add(this.button1);
             this.sidePanel.Location = new System.Drawing.Point(1, 0);
@@ -333,23 +342,25 @@
             this.groupquestionButton.UseVisualStyleBackColor = true;
             this.groupquestionButton.Click += new System.EventHandler(this.groupquestionButton_Click);
             // 
-            // button4
+            // saceCaseButton
             // 
-            this.button4.Location = new System.Drawing.Point(0, 492);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(200, 47);
-            this.button4.TabIndex = 3;
-            this.button4.Text = "Save Case";
-            this.button4.UseVisualStyleBackColor = true;
+            this.saceCaseButton.Location = new System.Drawing.Point(0, 492);
+            this.saceCaseButton.Name = "saceCaseButton";
+            this.saceCaseButton.Size = new System.Drawing.Size(200, 47);
+            this.saceCaseButton.TabIndex = 3;
+            this.saceCaseButton.Text = "Save Case";
+            this.saceCaseButton.UseVisualStyleBackColor = true;
+            this.saceCaseButton.Click += new System.EventHandler(this.saceCaseButton_Click);
             // 
-            // button3
+            // shareButton
             // 
-            this.button3.Location = new System.Drawing.Point(0, 349);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(200, 47);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "Export Case";
-            this.button3.UseVisualStyleBackColor = true;
+            this.shareButton.Location = new System.Drawing.Point(0, 349);
+            this.shareButton.Name = "shareButton";
+            this.shareButton.Size = new System.Drawing.Size(200, 47);
+            this.shareButton.TabIndex = 2;
+            this.shareButton.Text = "Share Case";
+            this.shareButton.UseVisualStyleBackColor = true;
+            this.shareButton.Click += new System.EventHandler(this.shareButton_Click);
             // 
             // button2
             // 
@@ -369,6 +380,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "Back to Home";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // doneButton
             // 
@@ -437,11 +449,59 @@
             this.sb1.TabIndex = 0;
             this.sb1.Text = "Help";
             // 
+            // sharePanel
+            // 
+            this.sharePanel.Controls.Add(this.shareCancelButton);
+            this.sharePanel.Controls.Add(this.shareCaseButton);
+            this.sharePanel.Controls.Add(this.textBox2);
+            this.sharePanel.Controls.Add(this.label3);
+            this.sharePanel.Location = new System.Drawing.Point(538, 528);
+            this.sharePanel.Name = "sharePanel";
+            this.sharePanel.Size = new System.Drawing.Size(219, 100);
+            this.sharePanel.TabIndex = 10;
+            this.sharePanel.Visible = false;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(11, 42);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(183, 22);
+            this.textBox2.TabIndex = 2;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(8, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(186, 39);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Enter the Email you want to share with";
+            // 
+            // shareCaseButton
+            // 
+            this.shareCaseButton.Location = new System.Drawing.Point(8, 70);
+            this.shareCaseButton.Name = "shareCaseButton";
+            this.shareCaseButton.Size = new System.Drawing.Size(75, 23);
+            this.shareCaseButton.TabIndex = 3;
+            this.shareCaseButton.Text = "Share";
+            this.shareCaseButton.UseVisualStyleBackColor = true;
+            this.shareCaseButton.Click += new System.EventHandler(this.shareCaseButton_Click);
+            // 
+            // shareCancelButton
+            // 
+            this.shareCancelButton.Location = new System.Drawing.Point(98, 70);
+            this.shareCancelButton.Name = "shareCancelButton";
+            this.shareCancelButton.Size = new System.Drawing.Size(75, 23);
+            this.shareCancelButton.TabIndex = 4;
+            this.shareCancelButton.Text = "Cancel";
+            this.shareCancelButton.UseVisualStyleBackColor = true;
+            this.shareCancelButton.Click += new System.EventHandler(this.shareCancelButton_Click);
+            // 
             // CaseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1183, 628);
+            this.Controls.Add(this.sharePanel);
             this.Controls.Add(this.legendpanel);
             this.Controls.Add(this.doneButton);
             this.Controls.Add(this.sidePanel);
@@ -461,6 +521,8 @@
             this.groupQuestonPanel.PerformLayout();
             this.sidePanel.ResumeLayout(false);
             this.legendpanel.ResumeLayout(false);
+            this.sharePanel.ResumeLayout(false);
+            this.sharePanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -471,8 +533,8 @@
         private System.Windows.Forms.FlowLayoutPanel jurorButtonPanel;
         private System.Windows.Forms.Label caseNameLabel;
         private System.Windows.Forms.Panel sidePanel;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button saceCaseButton;
+        private System.Windows.Forms.Button shareButton;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button groupquestionButton;
@@ -505,5 +567,10 @@
         private System.Windows.Forms.Label sb2;
         private System.Windows.Forms.Label sb4;
         private System.Windows.Forms.Label sb1;
+        private System.Windows.Forms.Panel sharePanel;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button shareCancelButton;
+        private System.Windows.Forms.Button shareCaseButton;
     }
 }
