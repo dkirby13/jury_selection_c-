@@ -11,6 +11,7 @@ using JurySelection.Logic_Objects;
 using System.Reflection;
 using System.Threading;
 using System.Net.Mail;
+using System.Net;
 
 namespace JurySelection.Forms
 {
@@ -780,18 +781,31 @@ namespace JurySelection.Forms
 
         private void shareCaseButton_Click(object sender, EventArgs e)
         {
+            TheCase.Save();
             if(MessageBox.Show(this, "Is this Email Address Correct: " + textBox2.Text, "Email Address Correct",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                MailMessage mail = new MailMessage("dkirby@umail.ucsb.edu", "dkirby@umail.ucsb.edu");
+                NetworkCredential basicCredential =
+    new NetworkCredential("dominic.kirby13@gmail.com", "dominicowns1");
+                MailMessage mail = new MailMessage("dominic.kirby13@gmail.com", textBox2.Text);
                 SmtpClient client = new SmtpClient();
-                client.Port = 25;
+                client.Port = 587;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = false;
+                client.EnableSsl = true;
                 client.Host = "smtp.gmail.com";
-                mail.Subject = "Dominic Test Email";
-                mail.Body = "This probably won't work";
+                client.Credentials = basicCredential;
+                mail.Attachments.Add(new Attachment(TheCase.GetFileLocation()));
+                mail.Subject = "Someone is trying to share a case with you";
+                mail.Body = "Hi, Someone shared this case with you in the Jury Selection App\n";// +
+                                                                                                // "Download this text file and put it in your documents folder";
+                Cursor.Current = Cursors.WaitCursor;
                 client.Send(mail);
+                mail.Attachments[0].Dispose();
+                Cursor.Current = Cursors.Default;
+                MessageBox.Show(this, "The case was successfully sent", "Case Shared",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                shareCancelButton_Click(null, null);
             }
         }
 

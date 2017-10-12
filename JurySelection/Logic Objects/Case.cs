@@ -103,6 +103,11 @@ namespace JurySelection.Logic_Objects
             System.IO.File.WriteAllLines(fileLocation, lines);
         }
 
+        public string GetFileLocation()
+        {
+            return System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\JurySelectionHelper\\" + Name + ".txt";
+        }
+
         public Case(string filelocation)
         {
             //FileStream file = File.OpenRe(filelocation);
